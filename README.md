@@ -67,3 +67,7 @@ docs/               the visualization (GitHub Pages) and the field videos
 - **Set frequency before mode.** The radio restores each band's remembered mode on a band change; `scan` handles this for you.
 - **The DC spur and a whole-MHz spur comb** from the receiver would show up as false channels; the scanner filters both.
 - **Listening to air traffic control is legal in the US**, and this tool only receives. Check your local rules elsewhere.
+
+## License
+
+MIT; see [LICENSE](LICENSE). This covers the code. The recordings are of public air traffic control radio, and the videos are the author's own.

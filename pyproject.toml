@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "Scan the VHF airband with a Malahit DSP2 SDR and live-transcribe air traffic control on macOS"
 readme = "README.md"
 requires-python = ">=3.11"
+license = "MIT"
 dependencies = ["numpy>=2.0", "sounddevice>=0.5", "pyserial>=3.5"]
 
 [project.optional-dependencies]
