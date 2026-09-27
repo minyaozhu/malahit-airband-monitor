@@ -1,0 +1,3 @@
+Message 0104 320
+---
+segments=3 mean_confidence=0.25

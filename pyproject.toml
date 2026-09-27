@@ -1,0 +1,20 @@
+[project]
+name = "malahit-airband-monitor"
+version = "0.1.0"
+description = "Scan the VHF airband with a Malahit DSP2 SDR and live-transcribe air traffic control on macOS"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = ["numpy>=2.0", "sounddevice>=0.5", "pyserial>=3.5"]
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+
+[project.scripts]
+airband = "airband.__main__:main"
+
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["airband", "malahit"]

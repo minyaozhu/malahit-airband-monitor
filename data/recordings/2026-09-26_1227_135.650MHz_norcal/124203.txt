@@ -1,0 +1,3 @@
+Hopkins Highfield inside sky 5049
+---
+segments=6 mean_confidence=0.74

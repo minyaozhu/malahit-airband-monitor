@@ -1,0 +1,3 @@
+454310728 left localized Suite 180
+---
+segments=11 mean_confidence=0.62

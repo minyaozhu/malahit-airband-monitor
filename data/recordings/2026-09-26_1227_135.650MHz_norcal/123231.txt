@@ -1,0 +1,3 @@
+Heading 350 down to 4000 2319
+---
+segments=7 mean_confidence=0.74

@@ -1,0 +1,3 @@
+45403 through approach 28 left maintain 180
+---
+segments=9 mean_confidence=0.59

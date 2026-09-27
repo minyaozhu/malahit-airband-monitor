@@ -1,0 +1,3 @@
+What age till the bridge or tower was very 689
+---
+segments=10 mean_confidence=0.54

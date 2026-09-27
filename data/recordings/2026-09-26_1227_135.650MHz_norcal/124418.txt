@@ -1,0 +1,3 @@
+The bridge at the bridge towers got 5249 and eight
+---
+segments=13 mean_confidence=0.59

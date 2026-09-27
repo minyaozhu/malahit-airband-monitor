@@ -1,0 +1,3 @@
+Good afternoon you're a new one for Mike with you
+---
+segments=4 mean_confidence=0.41

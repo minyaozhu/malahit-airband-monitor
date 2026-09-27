@@ -1,0 +1,3 @@
+Left the 330 Plaza for eight
+---
+segments=3 mean_confidence=0.11

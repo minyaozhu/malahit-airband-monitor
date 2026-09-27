@@ -1,0 +1,3 @@
+What's 60. The bridge is over
+---
+segments=4 mean_confidence=0.36

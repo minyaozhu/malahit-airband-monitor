@@ -1,0 +1,3 @@
+Or Cal approach delta 689 out of 846 210 on the speed heading 030
+---
+segments=17 mean_confidence=0.83

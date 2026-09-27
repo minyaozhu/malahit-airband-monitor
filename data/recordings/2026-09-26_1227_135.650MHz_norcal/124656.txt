@@ -1,0 +1,3 @@
+Wasn't turn up with visual look at 7:30
+---
+segments=5 mean_confidence=0.36

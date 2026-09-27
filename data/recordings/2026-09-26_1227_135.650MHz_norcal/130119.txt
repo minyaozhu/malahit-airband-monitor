@@ -1,0 +1,3 @@
+OK, well do you still want you're not gonna talk?
+---
+segments=7 mean_confidence=0.41

@@ -1,0 +1,3 @@
+OK at the bridge tower will be one 6685
+---
+segments=8 mean_confidence=0.37

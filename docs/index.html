@@ -1,0 +1,479 @@
+<title>Quiet Bridge Arrivals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F2F4EE; --panel:#FFFFFF; --ink:#1D2833; --muted:#5A6774; --line:#CBD3D8;
+  --land:#E6EBD8; --land-edge:#B9C4A4; --water:#CFE2EC; --water-edge:#9CBCD0;
+  --magenta:#A3316F; --blue:#2A5A93; --runway:#2B3440;
+  --c-check:#6C7C8C; --c-alt:#B26E12; --c-vec:#2A5A93; --c-trf:#A3316F; --c-app:#2E7B57; --c-hand:#6A4DA1; --c-other:#9AA5AE;
+  --shadow:0 1px 2px rgba(29,40,51,.08);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0E151B; --panel:#151F27; --ink:#E4EAEE; --muted:#93A2AE; --line:#2B3843;
+    --land:#1B2621; --land-edge:#33443A; --water:#10222D; --water-edge:#24475C;
+    --magenta:#E07BB2; --blue:#7FAEE6; --runway:#D5DCE2;
+    --c-check:#9AAAB8; --c-alt:#E3A54B; --c-vec:#7FAEE6; --c-trf:#E07BB2; --c-app:#6CC99A; --c-hand:#B39AE8; --c-other:#66737D;
+    --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0E151B; --panel:#151F27; --ink:#E4EAEE; --muted:#93A2AE; --line:#2B3843;
+  --land:#1B2621; --land-edge:#33443A; --water:#10222D; --water-edge:#24475C;
+  --magenta:#E07BB2; --blue:#7FAEE6; --runway:#D5DCE2;
+  --c-check:#9AAAB8; --c-alt:#E3A54B; --c-vec:#7FAEE6; --c-trf:#E07BB2; --c-app:#6CC99A; --c-hand:#B39AE8; --c-other:#66737D;
+  --shadow:none;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 "Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;padding:0 20px;}
+.wrap{max-width:1180px;margin:0 auto;padding-block:28px 48px;display:grid;gap:22px}
+header{display:grid;gap:6px}
+.eyebrow{font:600 13px/1 "Barlow Condensed",sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--magenta)}
+h1{font:700 clamp(34px,5vw,54px)/1 "Barlow Condensed","Arial Narrow",sans-serif;letter-spacing:.01em;margin:0;text-wrap:balance}
+.sub{color:var(--muted);max-width:70ch;margin:0}
+.facts{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:6px;font:500 14px/1.3 "IBM Plex Mono",ui-monospace,monospace;color:var(--ink)}
+.facts span b{font-weight:500;color:var(--muted);margin-right:6px}
+.main{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:860px){.main{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;box-shadow:var(--shadow)}
+.map{padding:10px}
+.map svg{width:100%;height:auto;display:block}
+.maplabel{font:600 12px "Barlow Condensed",sans-serif;letter-spacing:.08em;text-transform:uppercase;fill:var(--muted)}
+.placelabel{font:500 13px "Barlow Condensed",sans-serif;letter-spacing:.06em;fill:var(--muted)}
+.apt{font:700 15px "Barlow Condensed",sans-serif;letter-spacing:.06em;fill:var(--blue)}
+.fixlabel{font:600 11px "IBM Plex Mono",monospace;fill:var(--muted)}
+.tag{font:600 12px "IBM Plex Mono",monospace;fill:var(--ink)}
+.note{font:italic 400 12px "Barlow",sans-serif;fill:var(--muted)}
+.detail{padding:18px 18px 16px;display:grid;gap:12px}
+.detail h2{font:700 13px/1 "Barlow Condensed",sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0}
+.dhead{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px}
+.dtime{font:500 22px/1 "IBM Plex Mono",monospace}
+.dflight{font:700 22px/1 "Barlow Condensed",sans-serif;letter-spacing:.03em}
+.chip{display:inline-flex;align-items:center;gap:6px;font:600 12px/1 "Barlow Condensed",sans-serif;letter-spacing:.08em;text-transform:uppercase;padding:5px 8px;border-radius:3px;border:1px solid currentColor}
+.raw{font:400 14px/1.45 "IBM Plex Mono",monospace;background:var(--bg);border-left:3px solid var(--line);padding:10px 12px;margin:0;overflow-wrap:anywhere}
+.meaning{margin:0;font-size:16px}
+.meta{font:400 13px "IBM Plex Mono",monospace;color:var(--muted);margin:0}
+.flights{display:grid;gap:4px;margin:4px 0 0;padding:0;list-style:none;font-size:14px}
+.flights li{display:flex;justify-content:space-between;gap:10px;border-top:1px solid var(--line);padding-top:5px}
+.flights li span:last-child{color:var(--muted);text-align:right}
+.controls{display:flex;flex-wrap:wrap;align-items:center;gap:12px 16px;padding:12px 16px}
+button{font:600 14px/1 "Barlow Condensed",sans-serif;letter-spacing:.1em;text-transform:uppercase;background:var(--ink);color:var(--bg);border:0;border-radius:4px;padding:10px 14px;cursor:pointer;min-width:84px}
+button:focus-visible,input:focus-visible{outline:2px solid var(--magenta);outline-offset:2px}
+#scrub{flex:1 1 260px;accent-color:var(--magenta)}
+#clock{font:500 18px "IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;min-width:8ch}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font:600 13px "Barlow Condensed",sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+.tl{padding:8px 0 4px}
+.tlscroll{overflow-x:auto}
+.tl svg{display:block;min-width:760px;width:100%;height:auto}
+.lane{font:600 13px "Barlow Condensed",sans-serif;letter-spacing:.05em;fill:var(--ink)}
+.lanesub{font:400 11px "IBM Plex Mono",monospace;fill:var(--muted)}
+.tick{font:400 11px "IBM Plex Mono",monospace;fill:var(--muted)}
+.ev{cursor:pointer}
+.ev:focus{outline:none}
+.ev:focus-visible circle,.ev.sel circle{stroke:var(--ink);stroke-width:2.5}
+.caveat{color:var(--muted);font-size:13.5px;max-width:95ch;margin:0}
+.vids{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.vids figure{margin:0;display:grid;gap:6px}
+.vids video{width:100%;max-height:520px;background:#000;border-radius:4px}
+.vids figcaption{color:var(--muted);font-size:14px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">135.650 MHz · NorCal Approach · Saturday 26 Sep 2026</div>
+    <h1>Quiet Bridge Arrivals</h1>
+    <p class="sub">Half an hour of one approach controller lining up airliners for San Francisco runway 28 Left, reconstructed from live transcripts off a Malahit DSP2. Scrub the timeline or press Play to watch the arrival line move; click any transmission to read it.</p>
+    <div class="facts">
+      <span><b>WINDOW</b>12:27–12:57 PDT</span>
+      <span><b>TRANSMISSIONS</b><em id="nTx" style="font-style:normal">–</em></span>
+      <span><b>FLIGHTS</b>11 identified</span>
+      <span><b>RUNWAY</b>28L · visual</span>
+      <span><b>HANDED TO TOWER</b>6 heard</span>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="panel map">
+      <svg id="map" viewBox="0 0 720 470" role="img" aria-label="Schematic map of the San Francisco Bay arrival flow to runway 28 Left">
+        <rect x="0" y="0" width="720" height="470" fill="var(--land)"/>
+        <!-- bay (schematic) -->
+        <polygon points="300,0 470,0 520,60 540,120 600,170 680,215 720,240 720,330 640,320 560,330 470,330 400,300 330,250 285,215 275,160 300,110 285,50" fill="var(--water)" stroke="var(--water-edge)" stroke-width="1.2"/>
+        <polygon points="0,0 60,0 40,40 0,50" fill="var(--water)" stroke="var(--water-edge)" stroke-width="1.2"/>
+        <!-- Class B rings around SFO -->
+        <g fill="none" stroke="var(--magenta)" stroke-width="1.4" opacity=".55">
+          <circle cx="250" cy="200" r="70"/>
+          <circle cx="250" cy="200" r="150" stroke-dasharray="1 0"/>
+          <circle cx="250" cy="200" r="240"/>
+        </g>
+        <text class="fixlabel" x="258" y="126" fill="var(--magenta)">B</text>
+        <!-- places -->
+        <text class="placelabel" x="120" y="60">SAN FRANCISCO</text>
+        <text class="placelabel" x="560" y="80">OAKLAND</text>
+        <text class="placelabel" x="600" y="370">HAYWARD</text>
+        <text class="placelabel" x="300" y="370">FOSTER CITY</text>
+        <text class="apt" x="555" y="118">OAK</text>
+        <circle cx="545" cy="113" r="5" fill="none" stroke="var(--blue)" stroke-width="2"/>
+        <!-- San Mateo Bridge -->
+        <line x1="345" y1="318" x2="640" y2="262" stroke="var(--ink)" stroke-width="3" stroke-dasharray="10 4" opacity=".75"/>
+        <text class="maplabel" x="400" y="330" transform="rotate(-10.7 400 330)">San Mateo Bridge</text>
+        <!-- final approach course 28L (heading 284) -->
+        <line x1="262" y1="203" x2="660" y2="302" stroke="var(--blue)" stroke-width="1.4" stroke-dasharray="3 5"/>
+        <text class="fixlabel" x="600" y="298" fill="var(--blue)">28L LOC →284°</text>
+        <!-- typical flow -->
+        <path id="flow" d="M 420 450 L 520 425 L 640 405 L 660 330 L 575 283 L 440 250 L 262 203" fill="none" stroke="var(--magenta)" stroke-width="2" stroke-dasharray="6 6" opacity=".45"/>
+        <!-- SFO + runways -->
+        <circle cx="250" cy="200" r="22" fill="none" stroke="var(--blue)" stroke-width="2"/>
+        <g stroke="var(--runway)" stroke-width="4" stroke-linecap="round">
+          <line x1="229" y1="191" x2="268" y2="201"/>
+          <line x1="232" y1="182" x2="271" y2="192"/>
+        </g>
+        <text class="apt" x="205" y="240">SFO</text>
+        <text class="fixlabel" x="275" y="186">28R</text>
+        <text class="fixlabel" x="272" y="213">28L</text>
+        <!-- stage labels -->
+        <g class="fixlabel">
+          <text x="370" y="458">check-in · 6,000</text>
+          <text x="505" y="444">slow · descend</text>
+          <text x="646" y="420">vectors 100/180</text>
+          <text x="666" y="334">350/360</text>
+          <text x="560" y="272" text-anchor="end">hdg 310 · join LOC</text>
+          <text x="445" y="240" text-anchor="middle">at the bridge → tower</text>
+        </g>
+        <g id="planes"></g>
+        <text class="note" x="14" y="460">Schematic, not to scale. Positions inferred from instructions, not radar.</text>
+      </svg>
+    </div>
+
+    <div class="panel detail" aria-live="polite">
+      <h2>Selected transmission</h2>
+      <div class="dhead"><span class="dtime" id="dTime">–</span><span class="dflight" id="dFlight">–</span><span class="chip" id="dPhase">–</span></div>
+      <p class="raw" id="dRaw">–</p>
+      <p class="meaning" id="dMeaning">–</p>
+      <p class="meta" id="dMeta">–</p>
+      <h2 style="margin-top:6px">Arrival line</h2>
+      <ul class="flights" id="flightList"></ul>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="controls">
+      <button id="play" type="button" aria-pressed="false">Play</button>
+      <input id="scrub" type="range" min="0" max="1000" value="1000" aria-label="Time">
+      <span id="clock">12:57:00</span>
+      <div class="legend" id="legend"></div>
+    </div>
+    <div class="tl tlscroll"><svg id="timeline" role="img" aria-label="Timeline of transmissions by flight"></svg></div>
+  </div>
+
+  <div class="panel" style="padding:18px;display:grid;gap:14px">
+    <h2 style="font:700 13px/1 'Barlow Condensed',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0">In the field</h2>
+    <div class="vids">
+      <figure>
+        <video controls preload="metadata" playsinline src="media/radio-and-live-transcripts.mp4"></video>
+        <figcaption>The DSP2 on 135.650 MHz in the car, and the live transcripts coming in on the laptop. The audio is the approach frequency itself.</figcaption>
+      </figure>
+      <figure>
+        <video controls preload="metadata" playsinline src="media/quiet-bridge-arrivals-playback.mp4"></video>
+        <figcaption>This page playing back the session: arrivals moving along the Quiet Bridge flow as the timeline advances.</figcaption>
+      </figure>
+    </div>
+  </div>
+
+  <p class="caveat">Transcripts are raw output from the Mac's on-device speech recognizer, which handles aviation phraseology poorly; the interpretations are a best reading. Callsign digits are approximate: 2619/2319/2019, 685/868 and 660/3660 may each be one flight heard differently. The facility and runway are stated on the air: Delta 689 checks in with "NorCal Approach" and Alaska 688 is "cleared visual 28 left"; SFO and the Quiet Bridge Visual are inferred from those plus "at the bridge, contact tower". Flights handed to the tower more than 90 seconds earlier are parked at SFO on the map. Received on a Malahit DSP2, AM, 135.650 MHz.</p>
+</div>
+
+<script>
+const PH = {
+  check:{label:"Check-in", c:"--c-check", stage:0},
+  alt:{label:"Speed / altitude", c:"--c-alt", stage:1},
+  vec:{label:"Vector", c:"--c-vec", stage:2},
+  trf:{label:"Traffic / visual", c:"--c-trf", stage:3},
+  app:{label:"Approach / cleared", c:"--c-app", stage:4},
+  hand:{label:"Handoff", c:"--c-hand", stage:5},
+  other:{label:"Other / unclear", c:"--c-other", stage:null}
+};
+const FLIGHTS = [
+  {id:"SKW3347", name:"SkyWest 3347", sub:"cleared Quiet Bridge Visual"},
+  {id:"UAL2619", name:"United 2619", sub:"cleared visual 28L"},
+  {id:"1412", name:"…1412", sub:"airport-in-sight step"},
+  {id:"2309", name:"…2309", sub:"final vectors"},
+  {id:"685", name:"…685", sub:"cleared 28L, to tower"},
+  {id:"660", name:"…660", sub:"cleared visual 28L"},
+  {id:"SKW5249", name:"SkyWest 5249", sub:"cleared, to tower"},
+  {id:"733", name:"…733", sub:"cleared, to tower"},
+  {id:"1922", name:"…1922", sub:"cleared visual 28L, to tower"},
+  {id:"ASA688", name:"Alaska 688", sub:"cleared visual 28L"},
+  {id:"DAL689", name:"Delta 689", sub:"slowed, heading 360"},
+  {id:"?", name:"Unattributed", sub:"callsign not caught"}
+];
+// [time, dur s, dB, raw transcript, flight, phase, reading]
+const EV = [
+["12:27:37",3.1,23,"Set up","?","other","Fragment."],
+["12:27:43",1.6,27,"(unintelligible)","?","other","Short call, nothing recognized."],
+["12:27:48",1.9,50,"Turn on sky 0347","SKW3347","check","Controller calls SkyWest 3347."],
+["12:28:33",2.2,44,"(unintelligible)","?","other","Strong but not recognized."],
+["12:28:49",2.6,50,"73,003 3.7","?","hand","Likely a frequency change (\"contact … point seven\")."],
+["12:28:57",1.8,32,"(unintelligible)","?","other","Probably the read-back."],
+["12:29:39",3.7,43,"Bridget 3000 quart visual to sky 3347","SKW3347","app","Maintain 3,000, cleared Quiet Bridge Visual, SkyWest 3347."],
+["12:29:46",3.2,38,"Down 4045","?","alt","An altitude instruction or read-back."],
+["12:29:54",2.1,46,"180 203337","SKW3347","alt","Speed 180, SkyWest 3347."],
+["12:30:02",1.4,33,"47","SKW3347","alt","Pilot read-back ending \"…47\"."],
+["12:30:05",6.1,44,"Where can I 2619 9.2 to sending me the surfer must be 210 but I join court at Eddie","UAL2619","alt","United 2619: descending, speed 210, join the course."],
+["12:30:16",3.8,43,"Speed one $.90 maintain 5020 619","UAL2619","alt","Read-back: speed one niner zero, maintain 5,000, 2619."],
+["12:30:33",5.9,41,"1412 left here 100 traffic about 9 o'clock","1412","trf","Turn left heading 100; traffic at your 9 o'clock."],
+["12:30:52",2.3,35,"OK, I believe I see the trapped for yourself","1412","trf","\"OK, I believe I see the traffic.\""],
+["12:30:58",4.7,41,"It is 1804","?","other","Fragment with a number."],
+["12:31:09",3.8,34,"What's 60. The bridge is over","?","other","Mentions the bridge."],
+["12:31:16",1.8,38,"(unintelligible)","?","other","Short call."],
+["12:31:24",2.3,47,"I feel that look for traffic 2619","UAL2619","trf","Traffic advisory: look for traffic, United 2619."],
+["12:31:29",1.5,44,"Will do that 45","?","other","\"Will do\" from a flight ending …45."],
+["12:31:39",2.2,48,"I killed in traffic by 2619","UAL2619","trf","\"Traffic in sight\", United 2619."],
+["12:31:46",1.9,49,"My separation for my face","UAL2619","trf","\"Maintain visual separation.\""],
+["12:31:53",2.8,50,"33 through the headache airport site of 1412","1412","trf","Report the airport in sight, 1412."],
+["12:32:00",3.1,55,"Play Praat left 189 412","1412","vec","Turn left heading 180, 1412."],
+["12:32:06",6.1,42,"Call 92 3099 9500 and cent surfer join the court Island today 210","2309","alt","Descend and maintain, join the course, 210 knots."],
+["12:32:18",3.1,44,"15 5001 190 90,20 309","2309","alt","Read-back: 5,000, 190 knots, …309."],
+["12:32:31",3.2,56,"Heading 350 down to 4000 2319","2309","vec","Heading 350, down to 4,000."],
+["12:32:41",1.9,45,"Set a 2309 as a building","2309","other","Controller to 2309, rest garbled."],
+["12:32:50",4.1,34,"I don't ask for the set up bridge power there","?","other","Mentions the bridge."],
+["12:32:57",4.5,20,"Good afternoon you're a new one for Mike with you","?","check","New aircraft checks in with information Mike."],
+["12:33:12",7.0,19,"2000 4000","?","alt","Weak aircraft reporting altitudes."],
+["12:33:23",3.5,38,"What are something else?","?","other","Garbled."],
+["12:33:42",1.6,49,"2309","2309","other","Callsign only."],
+["12:33:48",2.4,59,"You 194 189 2619","UAL2619","vec","Headings or speeds to United 2619."],
+["12:33:59",2.7,40,"Out of power","?","other","Mis-hearing, not an emergency."],
+["12:34:10",2.0,45,"Return 360 2309","2309","vec","Turn right heading 360."],
+["12:34:16",2.3,49,"They were one 9923","2309","vec","Read-back of the heading."],
+["12:34:27",5.3,43,"Just left her 310 on the 3000 at 3000 cleared visual unit 2619","UAL2619","app","Turn left heading 310, maintain 3,000, cleared visual approach."],
+["12:34:34",3.1,35,"I left if you want to intercept before 3000","UAL2619","app","Read-back: left 310, intercept, 3,000."],
+["12:34:44",4.4,44,"All right, just maintain 3001 to 3000 clear individual runway left unit 2619","UAL2619","app","Maintain 3,000 until established, cleared visual runway 28L, United 2619."],
+["12:34:59",4.0,28,"Thank you one for my claim you 4000 right away","?","alt","Read-back with 4,000 and a right turn."],
+["12:35:16",4.0,20,"3900","?","other","Weak, number only."],
+["12:35:25",3.0,32,"I need to breakthrough power at the bridge 2019","UAL2619","hand","Something at the bridge; 2019 is likely 2619."],
+["12:35:29",4.5,36,"I took at 685,000 706,140","685","check","Numbers with 685; likely first contact."],
+["12:35:39",3.1,32,"I left 100 reduced to 1902 6,85","685","vec","Read-back: left heading 100, reduce to 190, 685."],
+["12:35:44",5.5,50,"Score 180, 2 309. We have traffic tonight at 12 at 11 o'clock at their Internet.","2309","trf","Heading 180; traffic 12 to 11 o'clock."],
+["12:35:56",4.3,49,"I meant 4000+330 join to a lucky 2309","2309","vec","Maintain 4,000, heading 330, join the course."],
+["12:36:06",2.7,18,"What does the","?","other","Weak fragment."],
+["12:36:15",1.4,37,"Call Oscar 685","685","other","Callsign only."],
+["12:36:21",1.9,39,"180 265","685","vec","180 to 685."],
+["12:36:27",2.1,47,"73,023","?","hand","Likely a frequency change to the tower."],
+["12:36:30",4.0,27,"59,000 376,000","?","other","Digits run together."],
+["12:36:39",2.9,29,"120785000","?","hand","Read-back of a new frequency (120.7?)."],
+["12:36:47",4.2,40,"Call 3103 39 2 309","2309","vec","Final vectors: 310 / 3,000."],
+["12:36:55",1.6,36,"Play","?","other","Fragment."],
+["12:37:01",1.7,40,"Yeah, we got it inside at 685","685","trf","\"We've got it in sight.\""],
+["12:37:06",2.9,46,"OK 4000 will maintain visual separation","685","trf","4,000, maintain visual separation."],
+["12:37:13",2.3,31,"Forward 190 minute 85,000","685","alt","190 knots, maintain 5,000."],
+["12:37:18",1.8,35,"(unintelligible)","?","other","Short call."],
+["12:37:36",1.7,50,"0102 6,85","685","vec","Heading 010, 685."],
+["12:38:18",1.8,38,"10036","685","vec","Read-back of the heading."],
+["12:38:30",3.7,35,"31022 8,11 localizer 265","685","app","Heading 310, join the runway 28 localizer."],
+["12:38:43",3.2,37,"34,000 we're looking","?","trf","\"We're looking\" for traffic."],
+["12:38:57",1.8,30,"Just wants a character","?","other","Garbled."],
+["12:39:04",6.0,42,"OK, just send me 3000 on reaching 3000. We're cleared for the approach to a left and that will maintain 16868.","685","app","Maintain 3,000 until established, cleared approach 28 left, maintain 160."],
+["12:39:16",1.6,39,"It's like 660","685","alt","Read-back of speed 160."],
+["12:39:20",1.9,42,"Separation","?","trf","\"…maintain visual separation.\""],
+["12:39:24",1.5,35,"Yes, sir, we got inside at six","660","trf","\"We've got it in sight.\""],
+["12:39:33",1.3,41,"I'll be looking","?","trf","\"We'll be looking.\""],
+["12:39:40",2.9,36,"OK at the bridge tower will be one 6685","685","hand","At the bridge, contact tower, 685."],
+["12:39:44",4.6,36,"Presco 5249 6000 776,080 060","SKW5249","check","Checks in at 6,000 (airline name garbled)."],
+["12:39:53",2.3,36,"Set my 4000 to 249","SKW5249","alt","Descend and maintain 4,000."],
+["12:39:58",1.7,43,"Lester 106","?","other","Garbled."],
+["12:40:55",4.1,53,"310 join to a left local as we got to the bridge","660","app","Heading 310, join the 28 left localizer."],
+["12:41:09",4.1,51,"10° left we're looking for the traffic go at 64","660","trf","Read-back; \"we're looking for the traffic\"."],
+["12:41:19",2.4,57,"Four 180-5249","SKW5249","vec","4,000 / 180 to 5249."],
+["12:41:25",1.5,20,"(unintelligible)","?","other","Weak."],
+["12:41:29",3.5,27,"Empress","SKW5249","other","Callsign fragment."],
+["12:41:37",2.9,44,"So what's $.60 3660","660","alt","Speed 160, 3660."],
+["12:41:43",4.1,30,"10 5350","SKW5249","vec","Heading read-back."],
+["12:41:52",3.6,40,"53,000 clear visual to left speed one 6660","660","app","Read-back: 3,000, cleared visual 28 left, speed 160."],
+["12:42:03",2.8,58,"Hopkins Highfield inside sky 5049","SKW5249","trf","Report the airfield in sight, SkyWest 5249."],
+["12:42:10",3.2,56,"020 maintain visual separation code 6049","SKW5249","trf","Heading 020, maintain visual separation."],
+["12:42:18",2.8,34,"Once a few the bridge Tower of the Bridge get 62","660","hand","At the bridge, contact tower."],
+["12:42:33",5.2,25,"(unintelligible)","?","other","Weak, long."],
+["12:42:49",4.5,29,"(unintelligible)","?","other","Weak, long."],
+["12:42:56",2.0,53,"010 code 52,49","SKW5249","vec","Heading 010, 5249."],
+["12:43:11",4.1,35,"Slept 9 100- 4033","?","vec","New arrival: left heading 100, 4,000."],
+["12:43:31",5.3,54,"31028 localizer got 52 40, 52,49","SKW5249","app","Heading 310, join the 28 localizer, 5249."],
+["12:43:40",2.3,29,"120.13","?","hand","Frequency read-back."],
+["12:44:09",3.4,44,"Visual less slow than the 160-105049","SKW5249","app","Cleared visual; speed 160, SkyWest 5249."],
+["12:44:18",3.0,39,"The bridge at the bridge towers got 5249 and eight","SKW5249","hand","At the bridge, contact tower, 5249."],
+["12:44:29",5.6,38,"Speed 180 up at 7:33 and the traffic was 11 o'clock","733","trf","Speed 180; traffic at 11 o'clock, …733."],
+["12:44:40",1.7,41,"Go at 7:33 we're looking","733","trf","\"We're looking\", 733."],
+["12:45:19",7.6,42,"I've got to 733. I believe we have traffic now about 10 o'clock slowly moving to our 9 o'clock invite above us.","733","trf","Pilot: traffic at 10 o'clock moving to 9 o'clock, above us."],
+["12:45:31",2.5,45,"Want me to put the for now we may lose out of them","?","other","Garbled reply."],
+["12:45:37",2.4,48,"I love heading to 10 at 7:33","733","vec","Heading 010, 733."],
+["12:46:30",5.6,44,"All right left her heading from zero join the left localizer bridge in airport inside because it's 33","733","app","Turn left heading (3)10, join the 28 left localizer; airport in sight, 733."],
+["12:46:38",1.1,32,"30","?","other","Number only."],
+["12:46:41",6.5,50,"Bro, actually 22 one0 thousand600 to be a server join the court only Eddie","1922","alt","…22: altitudes (10,000 / 6,000), descend, join the course."],
+["12:46:56",3.6,39,"Wasn't turn up with visual look at 7:30","733","trf","Visual / looking, 733."],
+["12:47:21",4.4,48,"19 4002 zero 2022","1922","alt","190 knots, 4,000, …22."],
+["12:47:30",4.4,37,"What bridge over the bridge over the town at 7:33 you have a deck","733","hand","At the bridge, over to tower, 733, have a good day."],
+["12:47:43",2.8,54,"Airport site looking for the traffic at 1922","1922","trf","Airport in sight, looking for the traffic, 1922."],
+["12:48:20",3.9,36,"Call tear it up to the bridge and over to our now. Got the 733. Have a fantastic day.","733","hand","Pilot: over to tower at the bridge, 733, have a fantastic day."],
+["12:48:40",1.6,62,"22","1922","other","Callsign tail only."],
+["12:48:45",2.1,65,"Open visual separation 22","1922","trf","Maintain visual separation, 1922."],
+["12:48:59",3.2,42,"Play song two 7000 76,000","?","check","Altitudes (7,000 / 6,000); likely a check-in."],
+["12:49:06",1.5,46,"(unintelligible)","?","other","Short call."],
+["12:49:11",1.9,64,"C190 Adelaide 22","1922","alt","Speed 190, 1922."],
+["12:49:38",4.0,66,"Maintain 3000 reaching 3000 for visual to 11 out of 1992","1922","app","Maintain 3,000 until established, cleared visual 28 left, 1922."],
+["12:49:48",1.7,67,"Show me what I","?","other","Fragment."],
+["12:49:53",2.8,47,"Set 19046","?","alt","190 knots, flight …46."],
+["12:50:07",1.6,49,"Thank you","?","other","Acknowledgement."],
+["12:50:16",1.4,48,"Process","?","other","Callsign fragment."],
+["12:50:39",3.3,56,"Message Joe, I'll be able to","?","other","Garbled."],
+["12:50:50",2.8,61,"We have the traffic inside at the inside","?","trf","\"We have the traffic in sight.\""],
+["12:50:59",3.2,60,"304010","?","vec","Digits: 3,000 / heading 010."],
+["12:51:09",3.3,43,"180 to the bridge over to the bridge take care 1922","1922","hand","180 to the bridge, over to tower, take care, 1922."],
+["12:51:23",2.0,60,"Message 0104 320","?","vec","Heading 010 or 320."],
+["12:52:06",2.4,26,"120- 4688","ASA688","other","Weak read-back, …688."],
+["12:52:18",4.4,57,"Left the 330 Plaza for eight","ASA688","vec","Turn left heading 330, …88."],
+["12:52:50",3.1,26,"10031-9688","ASA688","vec","Read-back of the heading, 688."],
+["12:52:58",5.7,45,"Or Cal approach delta 689 out of 846 210 on the speed heading 030","DAL689","check","\"NorCal Approach, Delta 689\", descending, 210 knots, heading 030."],
+["12:53:08",3.6,48,"Recruitment","?","other","Garbled; likely the reply to Delta."],
+["12:53:15",1.8,40,"Set 8 to 5000 Celtic statement","DAL689","alt","Read-back with 5,000."],
+["12:53:23",2.4,44,"So what is Delta six out?","DAL689","other","Controller calls Delta 6(89)."],
+["12:53:31",1.9,32,"Look for traffic at 6:80","DAL689","trf","\"Looking for traffic\", 689."],
+["12:53:39",2.0,40,"Delta 689 world five","DAL689","other","Callsign."],
+["12:53:51",1.5,46,"Still inside Celtic","?","trf","\"In sight\" plus a garbled callsign."],
+["12:54:05",1.4,29,"Inside Alaska 688","ASA688","trf","Traffic in sight, Alaska 688."],
+["12:54:10",2.9,36,"Separation 010688","ASA688","trf","Maintain visual separation, heading 010, Alaska 688."],
+["12:54:21",1.8,54,"South Fort L689","DAL689","other","Controller to Delta 689, garbled."],
+["12:54:56",2.8,37,"3000 we have airport at 688","ASA688","trf","3,000, airport in sight, Alaska 688."],
+["12:55:04",5.2,37,"310 join a visual 28 left and 180 not Alaska 688","ASA688","app","Heading 310, cleared visual 28 left, 180 knots, Alaska 688."],
+["12:55:13",3.5,56,"190 on the speed 36 a heading delta 689","DAL689","vec","190 on the speed, heading 360, Delta 689."],
+["12:55:23",2.4,19,"I'm not the great power of 688","ASA688","other","Weak read-back; \"power\" is a mis-hearing."],
+["12:55:56",1.8,57,"180 spinel 16","?","vec","180 to a flight ending …16."],
+["12:56:04",12.5,38,"9900","?","other","Probably two calls merged."],
+["12:56:24",6.8,44,"Standing to really do you think 210 out and pretending to 5006","?","check","New arrival: 210 knots, descending to 5,000."]
+].map(([t,d,db,raw,f,ph,m],i)=>{const [h,mi,s]=t.split(":").map(Number);return {i,t,sec:h*3600+mi*60+s,d,db,raw,f,ph,m}});
+
+const T0 = 12*3600+27*60, T1 = 12*3600+57*60;
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const fmt = s => [Math.floor(s/3600),Math.floor(s/60)%60,Math.floor(s%60)].map(v=>String(v).padStart(2,"0")).join(":");
+const NS = "http://www.w3.org/2000/svg";
+const el = (tag, attrs={}, parent) => {const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;};
+document.getElementById("nTx").textContent = EV.length;
+
+// legend
+const lg = document.getElementById("legend");
+for (const k of ["check","alt","vec","trf","app","hand","other"]) {
+  const s = document.createElement("span");
+  s.innerHTML = `<i style="background:var(${PH[k].c})"></i>${PH[k].label}`;
+  lg.appendChild(s);
+}
+
+// timeline
+const tl = document.getElementById("timeline");
+const LEFT = 150, RIGHT = 20, LANE = 38, TOP = 26, W = 1000;
+const H = TOP + FLIGHTS.length*LANE + 10;
+tl.setAttribute("viewBox", `0 0 ${W} ${H}`);
+const x = s => LEFT + (s - T0) / (T1 - T0) * (W - LEFT - RIGHT);
+for (let m = 0; m <= (T1-T0)/60; m++) {
+  const s = T0 + m*60, xx = x(s);
+  el("line",{x1:xx,x2:xx,y1:TOP-6,y2:H-6,stroke:"var(--line)","stroke-width":1},tl);
+  if (m % 3 === 0) { const t = el("text",{x:xx,y:14,class:"tick","text-anchor":"middle"},tl); t.textContent = fmt(s).slice(0,5); }
+}
+FLIGHTS.forEach((f,li)=>{
+  const y = TOP + li*LANE + LANE/2;
+  el("line",{x1:LEFT,x2:W-RIGHT,y1:y,y2:y,stroke:"var(--line)","stroke-width":1,"stroke-dasharray":"2 3"},tl);
+  const a = el("text",{x:12,y:y-2,class:"lane"},tl); a.textContent = f.name;
+  const b = el("text",{x:12,y:y+12,class:"lanesub"},tl); b.textContent = EV.filter(e=>e.f===f.id).length + " calls";
+});
+const cursor = el("line",{y1:TOP-8,y2:H-6,stroke:"var(--magenta)","stroke-width":2},tl);
+const dots = EV.map(e=>{
+  const li = FLIGHTS.findIndex(f=>f.id===e.f);
+  const g = el("g",{class:"ev",tabindex:0,role:"button","aria-label":`${e.t} ${e.raw}`},tl);
+  el("circle",{cx:x(e.sec),cy:TOP+li*LANE+LANE/2,r:Math.max(4,Math.min(8,2+e.d)),fill:`var(${PH[e.ph].c})`,stroke:"var(--panel)","stroke-width":1.5},g);
+  const tt = el("title",{},g); tt.textContent = `${e.t}  ${e.raw}`;
+  g.addEventListener("click",()=>select(e.i,true));
+  g.addEventListener("keydown",ev=>{if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();select(e.i,true);}});
+  return g;
+});
+
+// map aircraft along the flow
+const STAGE = [[420,450],[520,425],[640,405],[660,330],[575,283],[440,250]];
+const planes = document.getElementById("planes");
+const pl = {};
+FLIGHTS.filter(f=>f.id!=="?").forEach((f,k)=>{
+  const g = el("g",{opacity:0},planes); g.style.transition="transform .6s ease, opacity .4s";
+  el("circle",{r:7,fill:"var(--panel)",stroke:"var(--ink)","stroke-width":2},g);
+  el("path",{d:"M-4 2 L0 -5 L4 2 Z",fill:"var(--ink)"},g);
+  const t = el("text",{x:10,y:-8,class:"tag"},g); t.textContent = f.name.replace("…","");
+  pl[f.id] = {g, k};
+});
+
+function stateAt(t){
+  const st = {};
+  for (const f of FLIGHTS) {
+    if (f.id==="?") continue;
+    const past = EV.filter(e=>e.f===f.id && e.sec<=t);
+    if (!past.length) { st[f.id] = null; continue; }
+    const last = [...past].reverse().find(e=>PH[e.ph].stage!==null);
+    st[f.id] = {stage: last ? PH[last.ph].stage : 0, at: last ? last.sec : past[0].sec, last: past[past.length-1]};
+  }
+  return st;
+}
+const offsets = [[0,0],[14,-14],[-14,12],[16,14],[-16,-12],[0,18],[18,0],[-18,0],[0,-18],[20,20],[-20,-20]];
+function render(t){
+  cursor.setAttribute("x1",x(t)); cursor.setAttribute("x2",x(t));
+  document.getElementById("clock").textContent = fmt(t);
+  dots.forEach((d,i)=>d.style.opacity = EV[i].sec<=t ? 1 : .22);
+  const st = stateAt(t);
+  const occupied = {};
+  const list = document.getElementById("flightList"); list.innerHTML = "";
+  FLIGHTS.forEach(f=>{
+    if (f.id==="?") return;
+    const s = st[f.id], p = pl[f.id];
+    if (!s) { p.g.setAttribute("opacity",0); return; }
+    const gone = s.stage === 5 && t - s.at > 90;         // with the tower by now
+    const key = gone ? "tower" : s.stage;
+    const n = (occupied[key] = (occupied[key]||0)+1) - 1;
+    const [bx,by] = gone ? [238,218] : STAGE[s.stage], [ox,oy] = gone ? [n*6,n*6] : offsets[n % offsets.length];
+    p.g.setAttribute("opacity", gone ? .3 : 1);
+    p.g.style.transform = `translate(${bx+ox}px, ${by+oy}px)`;
+    const li = document.createElement("li");
+    const stageName = gone ? "With SFO Tower" : Object.values(PH).find(v=>v.stage===s.stage).label;
+    li.innerHTML = `<span><b>${f.name}</b></span><span>${stageName} · last ${s.last.t}</span>`;
+    list.appendChild(li);
+  });
+  if (!list.children.length) list.innerHTML = "<li><span>No flights heard yet</span><span></span></li>";
+}
+function select(i, moveTime){
+  const e = EV[i];
+  dots.forEach((d,k)=>d.classList.toggle("sel",k===i));
+  document.getElementById("dTime").textContent = e.t;
+  const f = FLIGHTS.find(v=>v.id===e.f);
+  document.getElementById("dFlight").textContent = f.name;
+  const ph = document.getElementById("dPhase");
+  ph.textContent = PH[e.ph].label; ph.style.color = `var(${PH[e.ph].c})`;
+  document.getElementById("dRaw").textContent = "“" + e.raw + "”";
+  document.getElementById("dMeaning").textContent = e.m;
+  document.getElementById("dMeta").textContent = `${e.d.toFixed(1)} s · carrier +${e.db} dB over idle${e.db>=50?" (very strong, likely the controller or a nearby aircraft)":""}`;
+  if (moveTime) { scrub.value = Math.round((e.sec-T0)/(T1-T0)*1000); render(e.sec); }
+}
+const scrub = document.getElementById("scrub");
+scrub.addEventListener("input",()=>{
+  const t = T0 + scrub.value/1000*(T1-T0); render(t);
+  const last = [...EV].reverse().find(e=>e.sec<=t); if (last) select(last.i,false);
+});
+let timer = null;
+const playBtn = document.getElementById("play");
+playBtn.addEventListener("click",()=>{
+  if (timer) { clearInterval(timer); timer=null; playBtn.textContent="Play"; playBtn.setAttribute("aria-pressed","false"); return; }
+  if (+scrub.value >= 1000) scrub.value = 0;
+  playBtn.textContent="Pause"; playBtn.setAttribute("aria-pressed","true");
+  timer = setInterval(()=>{
+    scrub.value = Math.min(1000, +scrub.value + 2);
+    scrub.dispatchEvent(new Event("input"));
+    if (+scrub.value >= 1000) { clearInterval(timer); timer=null; playBtn.textContent="Play"; playBtn.setAttribute("aria-pressed","false"); }
+  }, 60);
+});
+render(T1); select(EV.findIndex(e=>e.t==="12:34:44"), false);
+</script>

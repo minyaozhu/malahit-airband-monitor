@@ -1,0 +1,3 @@
+OK, I know those 28 left. We heading 330668.
+---
+segments=8 mean_confidence=0.21

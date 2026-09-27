@@ -1,0 +1,3 @@
+Call 3103 39 2 309
+---
+segments=7 mean_confidence=0.42

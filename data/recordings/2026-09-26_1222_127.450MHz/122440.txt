@@ -1,0 +1,3 @@
+We're currently getting 270 we transition to .73 mark
+---
+segments=9 mean_confidence=0.56

@@ -1,0 +1,3 @@
+10031-9688
+---
+segments=8 mean_confidence=0.66

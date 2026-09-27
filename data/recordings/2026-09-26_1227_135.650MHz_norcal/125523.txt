@@ -1,0 +1,3 @@
+I'm not the great power of 688
+---
+segments=6 mean_confidence=0.44

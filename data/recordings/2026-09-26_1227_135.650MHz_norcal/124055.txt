@@ -1,0 +1,3 @@
+310 join to a left local as we got to the bridge
+---
+segments=10 mean_confidence=0.41

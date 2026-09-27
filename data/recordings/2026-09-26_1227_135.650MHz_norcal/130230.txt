@@ -1,0 +1,3 @@
+We have the appointment at 10:45
+---
+segments=2 mean_confidence=0.24

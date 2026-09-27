@@ -1,0 +1,3 @@
+OK 4000 will maintain visual separation
+---
+segments=7 mean_confidence=0.83

@@ -1,0 +1,5 @@
+[12:23:31] ( 4.8 s, +26 dB) Turn on power
+[12:24:40] ( 6.4 s, +29 dB) We're currently getting 270 we transition to .73 mark
+[12:24:52] ( 5.0 s, +32 dB) I do not exceed 5.73 should be proper
+[12:26:35] ( 3.0 s, +26 dB) I will take it back at the work for you
+[12:26:42] ( 1.8 s, +28 dB) (unintelligible)

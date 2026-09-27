@@ -1,0 +1,3 @@
+30
+---
+segments=1 mean_confidence=0.79

@@ -1,0 +1,3 @@
+Turn on sky 0347
+---
+segments=5 mean_confidence=0.33

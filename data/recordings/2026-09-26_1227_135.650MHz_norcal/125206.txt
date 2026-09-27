@@ -1,0 +1,3 @@
+120- 4688
+---
+segments=7 mean_confidence=0.83

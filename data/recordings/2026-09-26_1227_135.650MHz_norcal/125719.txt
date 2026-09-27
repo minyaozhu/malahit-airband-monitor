@@ -1,0 +1,3 @@
+Left her heading 310 cleared for visual two till 6 AM
+---
+segments=9 mean_confidence=0.55

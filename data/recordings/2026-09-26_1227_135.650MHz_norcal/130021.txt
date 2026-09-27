@@ -1,0 +1,3 @@
+454 headache 100 maintain 4000
+---
+segments=7 mean_confidence=0.72

@@ -1,0 +1,3 @@
+304010
+---
+segments=5 mean_confidence=0.26

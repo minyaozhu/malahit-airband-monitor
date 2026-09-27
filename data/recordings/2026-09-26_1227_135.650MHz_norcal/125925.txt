@@ -1,0 +1,3 @@
+Reducing speed 18066
+---
+segments=5 mean_confidence=0.42

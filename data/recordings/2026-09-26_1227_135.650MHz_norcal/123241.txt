@@ -1,0 +1,3 @@
+Set a 2309 as a building
+---
+segments=9 mean_confidence=0.61

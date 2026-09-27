@@ -1,0 +1,3 @@
+010 code 52,49
+---
+segments=6 mean_confidence=0.71

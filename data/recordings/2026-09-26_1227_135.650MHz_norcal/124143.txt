@@ -1,0 +1,3 @@
+10 5350
+---
+segments=1 mean_confidence=0.01

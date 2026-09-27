@@ -1,0 +1,3 @@
+310 join a visual 28 left and 180 not Alaska 688
+---
+segments=15 mean_confidence=0.81
